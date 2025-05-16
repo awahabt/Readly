@@ -18,8 +18,8 @@ router.post('/signup', async (req, res) => {
     if (!name || !email || !password || !permanentAddress || !phone_no) {
         return res.status(400).json({ message: "All fields are required." });
     }
-
-    if (role && role !== 'admin' && role !== 'user') {
+    let userRole = role || 'user';
+    if (userRole !== 'admin' && userRole !== 'user') {
         return res.status(400).json({ message: "Invalid role" });
     }
 
@@ -35,7 +35,7 @@ router.post('/signup', async (req, res) => {
             password: password,
             permanent_address: permanentAddress,
             phone_no,
-            role: role || 'user', // Assign the role, default to 'user'
+            role: userRole,
         });
 
         res.status(201).json({ message: "User created successfully", user });

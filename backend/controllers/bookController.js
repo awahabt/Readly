@@ -75,11 +75,20 @@ if (req.files && req.files.length > 0) {
 
 // Existing getBooks function remains unchanged
 exports.getBooks = asyncHandler(async (req, res, next) => {
+  try {
+    const books = await Book.find().select('-__v').lean();
+    
+    if (!books) {
+      return next(new ErrorResponse('No books found', 404));
+    }
 
-  const books = await Book.find();
-  res.status(200).json({
-    success: true,
-    count: books.length,
-    data: books
-  });
+    res.status(200).json({
+      success: true,
+      count: books.length,
+      data: books
+    });
+  } catch (error) {
+    console.error('Error in getBooks:', error);
+    return next(new ErrorResponse('Error fetching books', 500));
+  }
 });
